@@ -1,0 +1,18 @@
+seq 0 10
+filter mod 5
+eq 0 | or (item | mod 3 | eq 0)
+end_filter
+sum
+print
+
+
+hello = "string".toUpper
+
+"string"
+toUpper
+save hello
+
+raw_str hello world   this sucks \hello end_raw_str
+
+
+hello

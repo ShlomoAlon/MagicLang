@@ -1,0 +1,17 @@
+1
+save first
+2
+save second
+
+save result 2
+
+while second | < 4000000 do
+save old_first
+
+second | save first
+
+if sum second first | save second | mod 2 | eq 0 then result | sum second | save result end_if
+end_while
+
+result
+echo

@@ -1,0 +1,24 @@
+Program ::= Block
+
+Block ::= Line*
+
+Line ::= (Value*) (pipe | newline)
+
+Value ::= Literal
+        | Symbol
+        | BlockStructure
+
+Literal ::= Number | Boolean
+
+Symbol ::= Identifier
+
+BlockStructure ::= ParenBlock
+                 | UserDefinedBlock
+
+// note all user defined blocks must start with a tag and end with a tag.
+// for example if ends with endif
+
+ParenBlock ::= "(" Block ")"
+
+Newline ::= "\n"
+Pipe ::= "|"

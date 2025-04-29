@@ -1,0 +1,22 @@
+save value 13195
+
+save divider 2
+
+save largest 1
+
+while divider | less_than value
+do
+
+if value | mod divider | eq 0
+then
+divider | save largest
+
+value | divide divider | save value
+
+sum divider 1
+save divider
+
+bash @hello end_bash
+
+end_while
+
