@@ -1,9 +1,5 @@
 # Loss‑less Lexer & Minimal AST Specification
 
-*(This document supersedes the earlier draft, aiming for greater clarity and concision. “Magic” snippets remain the reference, now accompanied by a minimal Python counterpart for comparison.)*
-
----
-
 ## 1 · Lexing
 
 ### 1.1 Separators
@@ -142,7 +138,7 @@ Concrete source code is **first** tokenised by the lexer (§1) and **then** pars
 
 ## 5 · Python Example: constructing the AST objects
 
-Assuming `LineList` and `PipeList` are already available (they behave like `list` with no extra boilerplate), the following snippet shows how to build the expected tree and assert that both textual representations map to it.
+the following snippet shows how to build the expected tree and assert that both textual representations map to it.
 
 ```python
 # --- textual inputs -------------------------------------------------
