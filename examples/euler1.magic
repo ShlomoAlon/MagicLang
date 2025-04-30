@@ -5,14 +5,4 @@ end_filter
 sum
 print
 
-
-hello = "string".toUpper
-
-"string"
-toUpper
-save hello
-
-raw_str hello world   this sucks \hello end_raw_str
-
-
-hello
+23

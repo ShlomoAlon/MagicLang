@@ -39,19 +39,15 @@ class PipeListType(List):
     pass
 
 class Function:
-    pipe: PipeListType
-    def __init__(self, pipe_line: PipeListType):
-        self.pipe = pipe_line
-
     def __call__(self, env: Environment, args, in_value):
-        class NewEnv(type(env)):
-            def get(self, name: str) -> Any:
-                if name.startswith("@"):
-                    return eval_ast(args[int(name[1:])], env)
-                elif name.startswith("$"):
-                    return args[int(name[1:])]
-                else:
-                    return super().get(name)
+        raise NotImplementedError()
+
+
+
+
+
+
+
 
 
 
@@ -77,7 +73,7 @@ class Environment:
         elif self.parent:
             return self.parent.get(name)
         else:
-            return f"{name}"
+            return name
 
     def set(self, name: str, value: Any) -> None:
         self.env[name] = value

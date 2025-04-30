@@ -1,5 +1,9 @@
+from _ast import While
+
 from Types import *
 from typing import *
+
+from functions import *
 from reader import parse
 
 def eval_ast(ast: Any, env: Environment, value: any = None) -> any:
@@ -29,11 +33,18 @@ def eval_ast(ast: Any, env: Environment, value: any = None) -> any:
             result = func
         else:
             args = ast[1:]
+            # the function is a built int function defined in magic lang itself
             if isinstance(func, Function):
                 result = func(env, args, value)
-            if callable(func):
-                if value is not None:
-                    raise TypeError("built in functions can't read from input")
+            elif isinstance(func, str):
+                # maybe the symbol is a method of the object value
+                hasattr(value, func) and getattr(func, value)(*[eval_ast(new_ast, env) for new_ast in args])
+            # the function is a built-in python function
+            elif callable(func):
+                if value is not None and len(args) > 0:
+                    raise TypeError("built in functions can't be in the middle of a pipeline")
+                if value is not None and len(args) == 0:
+                    result = func(value)
                 result = func(*[eval_ast(new_ast, env) for new_ast in args])
             else:
                 raise TypeError(f"Cannot call {func} current ast is {value_string(ast)}")
@@ -57,22 +68,18 @@ def create_default_env() -> Environment:
     env.set(
         "seq", range
     )
-    def magic_if(arg1, arg2, arg3):
-        if arg1:
-            return arg2
-        else:
-            return arg3
-    env.set("magic_if", magic_if)
 
-    env.set("magic_and", lambda arg1, arg2: arg1 and arg2)
-    env.set("magic_or", lambda arg1, arg2: arg1 or arg2)
+    env.set("and", And)
+    env.set("or", Or)
+    env.set("=", "__eq__")
+    env.set("next", "__next__")
+    env.set("<", "__lt__")
+    env.set("<=", "__le__")
+    env.set(">", "__gt__")
+    env.set(">=", "__ge__")
+    env.set("while", While)
+    env.set("sum", sum)
 
-    env.set("magic_for", lambda arg1, arg2: arg1 or arg2)
-
-
-    env.set(
-        "'filter", magic_filter
-    )
     return env
 
 def test_euler1_eval():
