@@ -1,0 +1,26 @@
+save left 0
+
+save right 0
+
+nums
+max
+save maximum
+
+save count 0
+
+for value index in nums | with_index do
+    if = value maximum then
+        modify count + 1
+    end_if
+
+    while > count k do
+        modify right + 1
+        if = value maximum then
+            modify count - 1
+        end_if
+    end_while
+end_for
+
+count
+
+

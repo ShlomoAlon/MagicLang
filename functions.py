@@ -1,5 +1,15 @@
-from Types import *
+from __future__ import annotations
 
+import typing
+from typing import *
+
+from eval import eval_ast
+
+if typing.TYPE_CHECKING:
+    from typing import *
+class Function:
+    def __call__(self, env: Environment, args, in_value):
+        raise NotImplementedError()
 
 class UserFunction(Function):
     pipe: PipeListType

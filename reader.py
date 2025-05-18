@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import *
-from Types import *
+from Types import PipeListType, LineList
 from tokenizer import Tokens
 
 def parse_if(tokens: Tokens) -> PipeListType:
@@ -34,6 +34,13 @@ def parse(text: str) -> PipeListType:
     return parse_block(tokens)
 
 def parse_block(tokens: Tokens, ends: list[str] = ()) -> PipeListType:
+    """
+
+hello | world
+(print
+world)
+world
+    """
     ast = PipeListType()
     while tokens and tokens.peek() not in ends:
         ast.append(parse_line(tokens, ends))
@@ -41,6 +48,10 @@ def parse_block(tokens: Tokens, ends: list[str] = ()) -> PipeListType:
     return ast
 
 def parse_line(tokens: Tokens, ends: list[str]) -> LineList | Literal["Empty"]:
+    """
+
+hello (world do this) hello | hello world do this
+    """
     new_lines = ('|', '\n')
     
     # Handle empty lines or pure newlines
@@ -106,9 +117,25 @@ def test_euler1_parse_tree():
     with open("examples/euler1.magic", 'r') as f:
         content = f.read()
     ast = parse(content)
-    expected = "(seq 0 10 | 'filter (mod 5 | eq 0 | or (item | mod 3 | eq 0)) | sum | print\n\n23)"
+    expected = """(
+seq 0 10
+'filter (
+  mod 5
+  eq 0
+  or (
+      item
+      mod 3
+      eq 0
+  )
+)
+sum
+print
+
+23
+)"""
+    from Types import value_string
     result = value_string(ast)
+    print(result)
     assert result == expected
     print("\nParse tree representation:")
-    print(result)
-    assert result == expected, f"Expected:\n{expected}\n\nGot:\n{result}" 
+    assert result == expected, f"Expected:\n{expected}\n\nGot:\n{result}"

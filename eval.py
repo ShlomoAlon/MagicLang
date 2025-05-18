@@ -1,10 +1,10 @@
 from _ast import While
+from readline import set_completion_display_matches_hook
 
+from Types import Environment
 from Types import *
 from typing import *
 
-from functions import *
-from reader import parse
 
 def eval_ast(ast: Any, env: Environment, value: any = None) -> any:
     print(f"evaluating ast: {ast.value_string()} type {type(ast)} with {value and value.value_string()}")
@@ -62,6 +62,7 @@ def eval_ast(ast: Any, env: Environment, value: any = None) -> any:
 
 
 def create_default_env() -> Environment:
+    from functions import And, Or, While
     env = Environment()
 
 
@@ -69,9 +70,10 @@ def create_default_env() -> Environment:
         "seq", range
     )
 
+
     env.set("and", And)
     env.set("or", Or)
-    env.set("=", "__eq__")
+    env.set("==", "__eq__")
     env.set("next", "__next__")
     env.set("<", "__lt__")
     env.set("<=", "__le__")
@@ -83,6 +85,7 @@ def create_default_env() -> Environment:
     return env
 
 def test_euler1_eval():
+    from reader import parse
     with open("examples/euler1.magic", 'r') as f:
         content = f.read()
     ast = parse(content)

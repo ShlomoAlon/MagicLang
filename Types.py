@@ -1,33 +1,37 @@
 from __future__ import annotations
+
+import textwrap
 from typing import *
 
-from eval import eval_ast
+def value_string(value: LineList | PipeListType | object, nested=0) -> str:
 
-
-def value_string(value: LineList | PipeListType | object) -> str:
-    if isinstance(value, str) or isinstance(value, int) or isinstance(value, float):
+    if value == "Empty":
+        return ""
+    elif isinstance(value, str) or isinstance(value, int) or isinstance(value, float):
         return str(value)
     elif isinstance(value, LineList):
-        return " ".join(map(value_string, value))
+        return " ".join([value_string(value, nested=nested + 1) for value in value])
     elif isinstance(value, PipeListType):
         if len(value) == 1:
             return value_string(value[0])
         else:
-            rep = "("
-
-            saw_empty = True
-            for val in value:
-                if val == "Empty":
-                    rep += "\n\n"
-                    saw_empty = True
-                else:
-                    if saw_empty:
-                        rep += value_string(val)
-                        saw_empty = False
-                    else:
-                        rep += f" | {value_string(val)}"
-            rep += ")"
-            return rep
+            # rep = "("
+            #
+            # saw_empty = True
+            # for val in value:
+            #     if val == "Empty":
+            #         rep += "\n\n"
+            #         saw_empty = True
+            #     else:
+            #         if saw_empty:
+            #             rep += value_string(val)
+            #             saw_empty = False
+            #         else:
+            #             rep += f" | {value_string(val)}"
+            # rep += ")"
+            inner = "\n".join([value_string(value, nested=nested+1) for value in value])
+            inner = textwrap.indent(inner, " " * nested)
+            return f"(\n{inner})"
     else:
         raise TypeError(f"Unsupported type {type(value)}")
 
@@ -55,9 +59,10 @@ class Function:
 
 
 
+#
+# TokenizedPrimitives = int | float | str
+# AllPrimitives = TokenizedPrimitives | bool | None
 
-TokenizedPrimitives = int | float | str
-AllPrimitives = TokenizedPrimitives | bool | None
 
 
 class Environment:
