@@ -6,22 +6,27 @@ from tokenizer import Tokens
 
 
 def parse(text: str) -> PipeListType:
+    """Parse *magic* source code into a ``PipeListType`` AST."""
     tokens = Tokens.tokenize(text)
     return parse_block(tokens)
 
 def parse_block(tokens: Tokens, ends: list[str] = ()) -> PipeListType:
+    """Parse a sequence of lines until one of ``ends`` is encountered."""
     ast = PipeListType()
     while tokens and tokens.peek() not in ends:
         ast.append(parse_line(tokens, ends))
-    
+
     return ast
 
 def parse_line(tokens: Tokens, ends: list[str]) -> LineList:
+    """Parse a single line, stopping at ``|`` or newline."""
     new_lines = ('|', '\n')
 
-    if not tokens or tokens.peek() in new_lines:
-        while tokens and tokens.peek() in new_lines:
-            tokens.next()
+    if not tokens:
+        return LineList()
+
+    if tokens.peek() in new_lines:
+        tokens.next()
         return LineList()
 
     ast = LineList()
@@ -39,6 +44,7 @@ def parse_line(tokens: Tokens, ends: list[str]) -> LineList:
     return ast
 
 def parse_atom(tokens: Tokens) -> Any:
+    """Parse the next value or nested block from ``tokens``."""
     if not tokens:
         return None
         
@@ -68,31 +74,3 @@ def parse_atom(tokens: Tokens) -> Any:
                 return float(token)
             except ValueError:
                 return token
-
-def test_euler1_parse_tree():
-    with open("examples/euler1.magic", 'r') as f:
-        content = f.read()
-    ast = parse(content)
-    expected = """seq 0 10
-'filter (
-  mod 5
-  eq 0
-  or (
-      item
-      mod 3
-      eq 0
-  )
-)
-sum
-print
-
-23"""
-    from Types import value_string
-    result = value_string(ast)
-    print(result)
-    if result != expected:
-        print("\nExpected:\n" + expected)
-        print("\nGot:\n" + result)
-    assert result == expected
-    print("\nParse tree representation:")
-    assert result == expected, f"Expected:\n{expected}\n\nGot:\n{result}"

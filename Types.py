@@ -5,33 +5,17 @@ from typing import *
 
 def value_string(value: LineList | PipeListType | object, nested=0) -> str:
 
-    if value == "Empty":
-        return ""
-    elif isinstance(value, str) or isinstance(value, int) or isinstance(value, float):
+    if isinstance(value, str) or isinstance(value, int) or isinstance(value, float):
         return str(value)
     elif isinstance(value, LineList):
         return " ".join([value_string(value, nested=nested + 1) for value in value])
     elif isinstance(value, PipeListType):
-        if len(value) == 1:
-            return value_string(value[0])
+        parts = [value_string(v, nested=nested) for v in value]
+        inner = "\n".join(parts)
+        if nested == 0:
+            return inner
         else:
-            # rep = "("
-            #
-            # saw_empty = True
-            # for val in value:
-            #     if val == "Empty":
-            #         rep += "\n\n"
-            #         saw_empty = True
-            #     else:
-            #         if saw_empty:
-            #             rep += value_string(val)
-            #             saw_empty = False
-            #         else:
-            #             rep += f" | {value_string(val)}"
-            # rep += ")"
-            inner = "\n".join([value_string(value, nested=nested+1) for value in value])
-            inner = textwrap.indent(inner, " " * nested)
-            return f"(\n{inner})"
+            return f"({inner})"
     else:
         raise TypeError(f"Unsupported type {type(value)}")
 

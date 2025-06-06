@@ -169,6 +169,25 @@ assert read(reprB_many) == expected_many
 
 The snippet constructs `PipeList`/`LineList` instances *directly* and shows that both notations defined in §3 round‑trip to the same in‑memory objects.
 
+## 6 · Reader behaviour
+
+The Python `Tokens` class implements the lexer from §1. `Tokens.tokenize`
+emits every separator as its own token and flushes the final accumulated
+token at end of input.
+
+The reader module builds the AST described in §2. `parse(text)` returns a
+`PipeListType` for the complete program and is implemented using three helper
+functions:
+
+- **`parse_block`** – creates a pipelist until one of the supplied end tokens
+  is seen.
+- **`parse_line`** – collects a linelist until a newline or pipe.
+- **`parse_atom`** – parses primitives or recursively parses nested blocks.
+
+Serialising an AST via `Types.value_string` and feeding the result back to
+`parse` yields an identical object. The tests assert this round‑trip property
+on simple examples as well as the `examples/euler1.magic` program.
+
 ---
 
 *End of specification*
