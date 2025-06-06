@@ -3,30 +3,6 @@ from typing import *
 from Types import PipeListType, LineList
 from tokenizer import Tokens
 
-def parse_if(tokens: Tokens) -> PipeListType:
-    assert tokens.next() == "if"
-    ast = PipeListType()
-    ast.append("'if")
-
-    ast.append(parse_block(tokens, ends=["then"]))
-    assert tokens.next() == "then"
-    ast.append(parse_block(tokens, ends=["else", "end_if"]))
-    assert tokens.peek() in ["else", "end_if"]
-    if tokens.peek() == "else":
-        tokens.next()  # consume 'else'
-        ast.append(parse_block(tokens, ends=["end_if"]))
-    assert tokens.next() == "end_if"
-    return ast
-
-def parse_filter(tokens: Tokens) -> LineList:
-    assert tokens.next() == "filter"
-    ast = LineList()
-    ast.append("'filter")
-    
-    # Parse the filter predicate as a pipeline
-    ast.append(parse_block(tokens, ends=["end_filter"]))
-    assert tokens.next() == "end_filter"
-    return ast
 
 
 def parse(text: str) -> PipeListType:
@@ -34,40 +10,25 @@ def parse(text: str) -> PipeListType:
     return parse_block(tokens)
 
 def parse_block(tokens: Tokens, ends: list[str] = ()) -> PipeListType:
-    """
-
-hello | world
-(print
-world)
-world
-    """
     ast = PipeListType()
     while tokens and tokens.peek() not in ends:
         ast.append(parse_line(tokens, ends))
     
     return ast
 
-def parse_line(tokens: Tokens, ends: list[str]) -> LineList | Literal["Empty"]:
-    """
-
-hello (world do this) hello | hello world do this
-    """
+def parse_line(tokens: Tokens, ends: list[str]) -> LineList:
     new_lines = ('|', '\n')
-    
-    # Handle empty lines or pure newlines
+
     if not tokens or tokens.peek() in new_lines:
         while tokens and tokens.peek() in new_lines:
             tokens.next()
-        return "Empty"
+        return LineList()
 
     ast = LineList()
-    while tokens and tokens.peek() not in new_lines and tokens.peek() not in ends:
-        if len(ast) == 0:
-            if tokens.peek() == "filter":
-                ast = parse_filter(tokens)
-                break
 
+    while tokens and tokens.peek() not in new_lines and tokens.peek() not in ends:
         atom = parse_atom(tokens)
+
         if atom is not None:
             ast.append(atom)
             
@@ -92,16 +53,11 @@ def parse_atom(tokens: Tokens) -> Any:
     elif token == " ":
         tokens.next()  # consume whitespace
         return None
-    elif token == "if":
-        return parse_if(tokens)
 
     elif token == "true":
         return True
     elif token == "false":
         return False
-
-    elif token in ["then", "else", "end_if", "end_filter"]:
-        raise SyntaxError(f"Unexpected keyword {token}")
     else:
         token = tokens.next()
         # Try to convert to number if possible
@@ -117,8 +73,7 @@ def test_euler1_parse_tree():
     with open("examples/euler1.magic", 'r') as f:
         content = f.read()
     ast = parse(content)
-    expected = """(
-seq 0 10
+    expected = """seq 0 10
 'filter (
   mod 5
   eq 0
@@ -131,11 +86,13 @@ seq 0 10
 sum
 print
 
-23
-)"""
+23"""
     from Types import value_string
     result = value_string(ast)
     print(result)
+    if result != expected:
+        print("\nExpected:\n" + expected)
+        print("\nGot:\n" + result)
     assert result == expected
     print("\nParse tree representation:")
     assert result == expected, f"Expected:\n{expected}\n\nGot:\n{result}"

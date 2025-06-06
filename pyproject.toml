@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
+    "ipython==9.3.0",
+    "ipython-reload>=0.0.1",
     "more-itertools>=10.6.0",
     "pytest==8.3.5",
 ]

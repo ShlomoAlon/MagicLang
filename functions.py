@@ -26,7 +26,7 @@ class UserFunction(Function):
                 else:
                     return super().get(name)
 
-class WhileFunction(Function):
+class While(Function):
     def __call__(self, env: Environment, args, in_value):
         assert in_value is None
         while eval_ast(args[0], env):

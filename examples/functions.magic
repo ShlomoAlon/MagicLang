@@ -1,0 +1,29 @@
+function in_arg
+optional_in_arg ignore
+optional_arg name is str
+do
+if eq in None then raise "there is no value for the input to
+    save name
+
+
+
+
+function lazy_args
+do
+for @name in args do
+
+
+function 'while
+lazy_args test body
+do
+python
+while @test:
+    @body
+end_pythonnction 'and
+in_arg in is
+
+function 'for
+arg sequence is iterator
+lazy_arg body
+do
+while

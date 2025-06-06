@@ -35,8 +35,23 @@ class Tokens:
 
     @staticmethod
     def tokenize(text: str) -> Tokens:
-        # Updated regex pattern to handle more token types
-        pattern = r'( |\n|\\|\||"[^"]*"|[0-9]+(?:\.[0-9]+)?|[^()\\ \n"|]+|\(|\))'
-        tokens = [t for t in re.findall(pattern, text) if t]  # Remove empty matches
-        return Tokens(tokens)
+        result = []
+        builder = ""
+        for i in text:
+            if i in "()\{}[];:| \n":
+                if builder != "":
+                    result.append(builder)
+                builder = ""
+                result.append(i)
+            else:
+                builder += i
+        return Tokens(result)
+
+
+
+def test_tokenize():
+    tokens = Tokens.tokenize("hello | world \n (print)")
+    assert tokens.tokens == ['hello', ' ', '|', ' ', 'world', ' ', '\n', ' ', '(', 'print', ')']
+
+
 
