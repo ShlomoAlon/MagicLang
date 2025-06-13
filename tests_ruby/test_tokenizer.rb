@@ -30,6 +30,28 @@ class TestTokenizer < Minitest::Test
     assert_equal expected, tokens.tokens
   end
 
+  def test_fibonacci_program
+    text = (
+      "function fib (n) (\n" +
+      "if (< n 2) (1)\n" +
+      "else (\n" +
+      "fib (n - 1) |\n" +
+      "fib (n - 2) |\n" +
+      "+ )\n" +
+      ")\n"
+    )
+    tokens = Tokens.tokenize(text)
+    expected = [
+      'function', ' ', 'fib', ' ', '(', 'n', ')', ' ', '(', "\n", 'if', ' ',
+      '(', '<', ' ', 'n', ' ', '2', ')', ' ', '(', '1', ')', "\n", 'else', ' ',
+      '(', "\n", 'fib', ' ', '(', 'n', ' ', '-', ' ', '1', ')', ' ', '|', "\n",
+      'fib', ' ', '(', 'n', ' ', '-', ' ', '2', ')', ' ', '|', "\n", '+', ' ',
+      ')', "\n", ')', "\n"
+    ]
+    assert_equal expected, tokens.tokens
+  end
+
+
   def test_peek_and_next
     tokens = Tokens.tokenize('a b')
     assert_equal 'a', tokens.peek
