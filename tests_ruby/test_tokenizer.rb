@@ -51,6 +51,7 @@ class TestTokenizer < Minitest::Test
     assert_equal expected, tokens.tokens
   end
 
+
   def test_peek_and_next
     tokens = Tokens.tokenize('a b')
     assert_equal 'a', tokens.peek
